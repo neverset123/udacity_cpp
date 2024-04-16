@@ -16,20 +16,21 @@
 
 class Game {
  public:
-  Game(std::size_t grid_width, std::size_t grid_height);
+  Game(std::size_t grid_width, std::size_t grid_height, std::size_t num_of_life, std::string mode);
   ~Game();
   void Run(Controller const &controller, Renderer &renderer,
            std::size_t target_frame_duration);
-  int GetScore() const;
-  int GetSize() const;
+  int GetScore(size_t i) const;
+  int GetSize(size_t i) const;
 
  private:
-  std::unique_ptr<Snake> snake;
+  std::vector<std::unique_ptr<Snake>> snakeVec;
   Food* food;
-  int score{0};
+  std::vector<int> scores = {0,0};
   bool food_eaten;
   std::mutex mtx_;
   bool running = true;
+  std::string mode;
 
   void PlaceFood();
   void Update();

@@ -1,6 +1,7 @@
 #include "snake.h"
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 
 void Snake::Update() {
   SDL_Point prev_cell{
@@ -15,6 +16,56 @@ void Snake::Update() {
   // cell.
   if (current_cell.x != prev_cell.x || current_cell.y != prev_cell.y) {
     UpdateBody(current_cell, prev_cell);
+  }
+}
+
+void Snake::Reverse() {
+  if(body.size()==0)
+  {
+    switch (direction) {
+      case Direction::kUp:
+        direction = Direction::kDown;
+        break;
+
+      case Direction::kDown:
+        direction = Direction::kUp;
+        break;
+
+      case Direction::kLeft:
+        direction = Direction::kRight;
+        break;
+
+      case Direction::kRight:
+        direction = Direction::kLeft;
+        break;
+    }
+  }
+  else
+  {
+    SDL_Point current_cell{
+        static_cast<int>(head_x),
+        static_cast<int>(head_y)};
+    body.push_back(current_cell);
+    head_x = body.begin()->x;
+    head_y = body.begin()->y;
+    body.erase(body.begin());
+    std::reverse(body.begin(), body.end());
+    if(body.end()->x==head_x && body.end()->y<head_y)
+    {
+      direction = Direction::kDown;
+    }
+    else if(body.end()->x==head_x && body.end()->y>head_y)
+    {
+      direction = Direction::kUp;
+    }
+      else if(body.end()->x>head_x && body.end()->y==head_y)
+    {
+      direction = Direction::kLeft;
+    }
+    else if(body.end()->x<head_x && body.end()->y==head_y)
+    {
+      direction = Direction::kRight;
+    }
   }
 }
 
@@ -57,9 +108,28 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
   // Check if the snake has died.
   for (auto const &item : body) {
     if (current_head_cell.x == item.x && current_head_cell.y == item.y) {
-      alive = false;
+      num_of_life--;
+      if(num_of_life==0)
+      {
+        alive = false;
+      }
+      else
+      {
+        Reset();
+      }
     }
   }
+}
+
+void Snake::Reset()
+{
+  direction = Direction::kUp;
+  speed = 0.1f;
+  size = 1;
+  head_x = grid_width / 2;
+  head_y = grid_height / 2;
+  body.clear();
+  growing = false;
 }
 
 void Snake::GrowBody() { growing = true; }

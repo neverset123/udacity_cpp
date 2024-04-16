@@ -3,6 +3,11 @@
 
 #include <random>
 
+enum class FoodType {
+    NORMAL,
+    POISONOUS
+};
+
 class Food {
 public:
     Food(int grid_width, int grid_height)
@@ -14,6 +19,7 @@ public:
     // Getters for the food's position.
     int GetX() const;
     int GetY() const;
+    FoodType GetType() const;
 
 private:
     std::random_device dev;
@@ -23,6 +29,7 @@ private:
 
     int x;
     int y;
+    FoodType food_type;
 };
 
 #endif
