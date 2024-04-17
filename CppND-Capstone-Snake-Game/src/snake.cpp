@@ -3,6 +3,12 @@
 #include <iostream>
 #include <algorithm>
 
+std::unordered_map<Snake::Direction, Snake::Direction> Snake::opposite_direction = {
+                                                        {Snake::Direction::kUp, Snake::Direction::kDown},
+                                                        {Snake::Direction::kDown, Snake::Direction::kUp},
+                                                        {Snake::Direction::kLeft, Snake::Direction::kRight},
+                                                        {Snake::Direction::kRight, Snake::Direction::kLeft},
+                                                    };
 void Snake::Update() {
   SDL_Point prev_cell{
       static_cast<int>(head_x),
@@ -23,20 +29,20 @@ void Snake::Reverse() {
   if(body.size()==0)
   {
     switch (direction) {
-      case Direction::kUp:
-        direction = Direction::kDown;
+      case Snake::Direction::kUp:
+        direction = Snake::Direction::kDown;
         break;
 
-      case Direction::kDown:
-        direction = Direction::kUp;
+      case Snake::Direction::kDown:
+        direction = Snake::Direction::kUp;
         break;
 
-      case Direction::kLeft:
-        direction = Direction::kRight;
+      case Snake::Direction::kLeft:
+        direction = Snake::Direction::kRight;
         break;
 
-      case Direction::kRight:
-        direction = Direction::kLeft;
+      case Snake::Direction::kRight:
+        direction = Snake::Direction::kLeft;
         break;
     }
   }
@@ -52,38 +58,38 @@ void Snake::Reverse() {
     std::reverse(body.begin(), body.end());
     if(body.end()->x==head_x && body.end()->y<head_y)
     {
-      direction = Direction::kDown;
+      direction = Snake::Direction::kDown;
     }
     else if(body.end()->x==head_x && body.end()->y>head_y)
     {
-      direction = Direction::kUp;
+      direction = Snake::Direction::kUp;
     }
       else if(body.end()->x>head_x && body.end()->y==head_y)
     {
-      direction = Direction::kLeft;
+      direction = Snake::Direction::kLeft;
     }
     else if(body.end()->x<head_x && body.end()->y==head_y)
     {
-      direction = Direction::kRight;
+      direction = Snake::Direction::kRight;
     }
   }
 }
 
 void Snake::UpdateHead() {
   switch (direction) {
-    case Direction::kUp:
+    case Snake::Direction::kUp:
       head_y -= speed;
       break;
 
-    case Direction::kDown:
+    case Snake::Direction::kDown:
       head_y += speed;
       break;
 
-    case Direction::kLeft:
+    case Snake::Direction::kLeft:
       head_x -= speed;
       break;
 
-    case Direction::kRight:
+    case Snake::Direction::kRight:
       head_x += speed;
       break;
   }
@@ -123,7 +129,7 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
 
 void Snake::Reset()
 {
-  direction = Direction::kUp;
+  direction = Snake::Direction::kUp;
   speed = 0.1f;
   size = 1;
   head_x = grid_width / 2;

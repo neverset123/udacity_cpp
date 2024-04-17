@@ -17,9 +17,9 @@ int main() {
   std::string username_2;
   std::string mode;
 
-  std::cout << "Please select player mode(s for single player, d for double player): ";
+  std::cout << "Please select player mode(s for single player, d for double player, ai for ai opponent): ";
   std::getline(std::cin, mode);
-  if(mode == "s")
+  if(mode == "s" || mode == "ai")
   {
     std::cout << "Please enter username: ";
     std::getline(std::cin, username);
@@ -39,7 +39,7 @@ int main() {
 
   Renderer renderer(kScreenWidth, kScreenHeight, kGridWidth, kGridHeight);
   Controller controller;
-  Game game(kGridWidth, kGridHeight, numOfLife, mode);
+  Game game(kGridWidth, kGridHeight, kScreenWidth, kScreenHeight, numOfLife, mode);
   game.Run(controller, renderer, kMsPerFrame);
   std::cout << "Game has terminated successfully!\n";
 

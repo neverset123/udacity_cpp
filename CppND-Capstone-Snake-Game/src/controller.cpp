@@ -89,3 +89,4 @@ void Controller::HandleInput(bool &running, Snake &snake, Snake &snake_2) const 
     }
   }
 }
+

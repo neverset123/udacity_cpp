@@ -92,7 +92,7 @@ void Renderer::UpdateWindowTitle(std::vector<int> scores, int fps, std::string m
     std::string title{"User Score: " + std::to_string(scores.at(0)) + " FPS: " + std::to_string(fps)};
     SDL_SetWindowTitle(sdl_window, title.c_str());
   }
-  else if(mode == "d")
+  else if(mode == "d" || mode == "ai")
   {
     std::string title{"User 1 Score: " + std::to_string(scores.at(0)) + " User 2 Score: " + std::to_string(scores.at(1)) + " FPS: " + std::to_string(fps)};
     SDL_SetWindowTitle(sdl_window, title.c_str());

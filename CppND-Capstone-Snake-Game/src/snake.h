@@ -2,13 +2,14 @@
 #define SNAKE_H
 
 #include <vector>
+#include <unordered_map>
 #include "SDL.h"
 #include "food.h"
 
 class Snake {
  public:
   enum class Direction { kUp, kDown, kLeft, kRight };
-
+  static std::unordered_map<Direction, Direction> opposite_direction;
   Snake(int grid_width, int grid_height, int num_of_life)
       : grid_width(grid_width),
         grid_height(grid_height),
@@ -21,7 +22,7 @@ class Snake {
   void GrowBody();
   bool SnakeCell(Food& food);
 
-  Direction direction = Direction::kUp;
+  Snake::Direction direction = Snake::Direction::kUp;
 
   float speed{0.1f};
   int size{1};
