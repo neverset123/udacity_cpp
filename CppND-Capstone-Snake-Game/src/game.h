@@ -60,9 +60,8 @@ class Game {
   std::size_t screen_height;
   std::vector<std::unique_ptr<Point>> path;
 
-  void PlaceFood();
+  void PlaceFood(FoodType type);
   void Update();
-  void Log();
 };
 
 #endif

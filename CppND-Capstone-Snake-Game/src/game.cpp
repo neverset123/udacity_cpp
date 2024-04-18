@@ -7,7 +7,6 @@ Game::Game(std::size_t grid_width, std::size_t grid_height, std::size_t screen_w
     {
       snakeVec.push_back(std::move(std::make_unique<Snake>(grid_width, grid_height, num_of_life))); 
       snakeVec.push_back(std::move(std::make_unique<Snake>(grid_width, grid_height, num_of_life)));
-      food->Place();
     }
 
 Game::~Game()
@@ -23,7 +22,8 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   Uint32 frame_duration;
   int frame_count = 0;
 
-  std::thread t = std::thread(&Game::Log, this);
+  std::thread t = std::thread(&Game::PlaceFood, this, FoodType::NORMAL);
+  std::thread t1 = std::thread(&Game::PlaceFood, this, FoodType::POISONOUS);
   while (running) {
     frame_start = SDL_GetTicks();
 
@@ -47,7 +47,6 @@ void Game::Run(Controller const &controller, Renderer &renderer,
         path.pop_back();
       }
     }
-    
 
     Update();
     std::vector<Snake*> snakes_raw;
@@ -83,25 +82,33 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     }
   }
   t.join();
+  t1.join();
 }
 
-void Game::PlaceFood() {
-  while (true) {
-    // Check that the location is not occupied by a snake item before placing
-    // food.
-    food->Place();
-    if(mode == "s")
+void Game::PlaceFood(FoodType type) {
+  while(running)
+  {
+    mtx_.lock();
+    if(food_eaten)
     {
-      if (!snakeVec.at(0)->SnakeCell(*food)) {
-        return;
-      }
+        // Check that the location is not occupied by a snake item before placing
+        // food.
+        food->Place(type);
+        if(mode == "s")
+        {
+          if (!snakeVec.at(0)->SnakeCell(*food)) {
+            food_eaten = false;
+          }
+        }
+        else if(mode == "d" || mode == "ai")
+        {
+          if (!snakeVec.at(0)->SnakeCell(*food) && !snakeVec.at(1)->SnakeCell(*food)) {
+            food_eaten = false;
+          }
+        }
     }
-    else if(mode == "d" || mode == "ai")
-    {
-      if (!snakeVec.at(0)->SnakeCell(*food) && !snakeVec.at(1)->SnakeCell(*food)) {
-        return;
-      }
-    }
+    mtx_.unlock();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 }
 
@@ -125,7 +132,8 @@ void Game::Update() {
       if(food->GetType() == FoodType::NORMAL)
       {
         scores.at(i)++;
-        PlaceFood();
+        // PlaceFood();
+        food_eaten = true;
         // Grow snake and increase speed.
         snakeVec.at(i)->GrowBody();
         snakeVec.at(i)->speed += 0.02;
@@ -133,26 +141,14 @@ void Game::Update() {
       else
       {
         snakeVec.at(i)->Reverse();
-        PlaceFood();
+        // PlaceFood();
+        food_eaten = true;
       }
     }
-  }
-}
-
-void Game::Log() 
-{
-  int score_record = 10;
-  while(running)
-  {
-    mtx_.lock();
-    int score = GetScore(0);
-    mtx_.unlock();
-    if(score==score_record)
+    while(food_eaten)
     {
-      std::cout << "congratulations, you have gotten " << score << " scores!\n";
-      score_record += score_record;
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
   }
 }
 

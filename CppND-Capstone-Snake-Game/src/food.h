@@ -13,7 +13,7 @@ public:
     Food(int grid_width, int grid_height)
         : engine(dev()), random_w(0, static_cast<int>(grid_width - 1)), random_h(0, static_cast<int>(grid_height - 1)) {}
     // Function to set a new random position for the food.
-    void Place();
+    void Place(FoodType type);
     // Function to check if the food is at a certain position.
     bool IsAt(int x, int y) const;
     // Getters for the food's position.

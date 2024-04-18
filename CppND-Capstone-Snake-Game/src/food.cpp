@@ -1,18 +1,11 @@
 #include "food.h"
 #include <iostream>
 
-void Food::Place() 
+void Food::Place(FoodType type) 
 {
     x = random_w(engine);
     y = random_h(engine);
-    bool random_bool = std::rand()%2;
-    if(random_bool)
-    {
-        food_type = FoodType::NORMAL;
-    }
-    else{
-        food_type = FoodType::POISONOUS;
-    }
+    food_type = type;
 }
 
 bool Food::IsAt(int x, int y) const 
